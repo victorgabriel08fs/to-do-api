@@ -4,15 +4,15 @@ class TaskUseCases {
     async index(query) {
         const count = await prisma.task.count({
             where: {
-                userId: Number(query.userId)
+                workspaceId: Number(query.workspaceId)
             }
         });
         const tasks = await prisma.task.findMany({
             where: {
-                userId: Number(query.userId)
+                workspaceId: Number(query.workspaceId)
             },
             include: {
-                user: true
+                workspace: true
             }, orderBy: { createdAt: 'asc' }, orderBy: { status: 'asc' },
             take: Number(query.take) ?? 10,
         });
@@ -32,7 +32,8 @@ class TaskUseCases {
     }
 
     async store(data) {
-        const newTask = await prisma.task.create({ data });
+        const { title, description, workspaceId } = data;
+        const newTask = await prisma.task.create({ data: { title, description, workspaceId: Number(workspaceId) } });
 
         return newTask;
     }
@@ -72,14 +73,14 @@ class TaskUseCases {
 
     async delete(id) {
         const task = await prisma.task.findUnique({
-            where: { id:Number(id) }
+            where: { id: Number(id) }
         });
 
         if (!task) {
             return null;
         }
 
-        await prisma.task.delete({ where: { id:Number(id) } });
+        await prisma.task.delete({ where: { id: Number(id) } });
 
         return true;
     }
