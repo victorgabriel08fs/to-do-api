@@ -4,14 +4,15 @@ import { prisma } from "../prisma/client.js";
 class AuthUseCases {
     async login({ email, password }) {
         const cipherPassword = md5(password);
-        const users = await prisma.user.findMany({
+        const processedEmail = email.toLowerCase();
+        console.log(processedEmail);
+        const user = await prisma.user.findFirst({
             where: {
-                email,
+                email: processedEmail,
                 password: cipherPassword
             }
         });
 
-        const user = users[0];
         return user;
     }
 

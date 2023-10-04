@@ -12,18 +12,18 @@ class TasksSeeder extends SeederClass {
                 const last = tasks.pop();
                 j = last.id + 1
             }
-            const usersCount = await prisma.user.count();
-            const skip = Math.floor(Math.random() * usersCount);
-            const users = await prisma.user.findMany({
+            const workspaceCount = await prisma.workspace.count();
+            const skip = Math.floor(Math.random() * workspaceCount);
+            const workspaces = await prisma.workspace.findMany({
                 take: 1,
                 skip: skip,
             });
-            const user = users.pop();
+            const workspace = workspaces.pop();
             await prisma.task.create({
                 data: {
                     title: this.faker.word.words({ count: { min: 5, max: 10 } }),
                     description: Math.random() < 0.5 ? null : this.faker.word.words({ count: { min: 10, max: 12 } }),
-                    userId: user.id
+                    workspaceId: workspace.id
                 }
             });
         }
